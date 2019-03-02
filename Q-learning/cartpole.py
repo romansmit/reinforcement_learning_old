@@ -78,8 +78,6 @@ class QAgent:
             q_next = self.Q_model_predict.predict(st2)
             q_next = np.max(q_next, axis=1) * (1 - don)
             q_target = rew + self.discount * q_next
-            q_target = np.vstack((q_target, q_target)).T
-            q_target = q_target * ac
             self.Q_model_train.train_on_batch([st1, ac], q_target)
 
     def build_q_model(self, hidden_layer_sizes=(40, 40)):
@@ -96,7 +94,7 @@ class QAgent:
         We contract the predicted outputs with a mask that is to be provided by input when training.
         """
         inp_mask = layers.Input(shape=(self.action_dim,))
-        out_masked = layers.Multiply()([out_ac, inp_mask])
+        out_masked = layers.Dot(axes=1)([out_ac, inp_mask])
 
         model_train = Model(inputs=[inp_st, inp_mask], outputs=out_masked)
         model_train.compile(loss='mse', optimizer=Adam())
