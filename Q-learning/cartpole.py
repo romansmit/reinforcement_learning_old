@@ -88,7 +88,7 @@ class QAgent:
         prev = inp_st
         for n in hidden_layer_sizes:
             prev = layers.Dense(n, activation='relu')(prev)
-        out_ac = layers.Dense(self.action_dim)(prev)tack((q_target, q_target)).T
+        out_ac = layers.Dense(self.action_dim)(prev)
 
         """we only want to fit the output for the action actually taken.
         We contract the predicted outputs with a mask that is to be provided by input when training.
